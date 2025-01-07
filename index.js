@@ -1,8 +1,22 @@
 const express = require('express')
 const app = express()
-
+const morgan = require('morgan')
 //to be available to recieved data in JSON format and parser automaticly in js objects 
 app.use(express.json())
+
+//we use this middlerware after express.json(), because if we did it before, then req.body would be undefined
+// New token type bring the data from the POST method
+morgan.token('personData', (req) => JSON.stringify(req.body));
+// Combine manually the tiny format with the token format
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :personData ',{
+    skip: (req, res) => req.method !== 'POST', //only for POST
+}));
+
+//and to all other methods, we use the normal tiny format, except for POST
+app.use(morgan('tiny',{
+    skip: (req, res) => req.method === 'POST', //only for POST
+}))
+
 let persons = [
     { 
       "id": "1",
@@ -106,7 +120,6 @@ app.post('/api/persons/', (request, response) => {
     
 
 })
-
 
 const PORT = 3001
 app.listen(PORT, () => {

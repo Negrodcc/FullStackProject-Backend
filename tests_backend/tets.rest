@@ -1,7 +1,7 @@
 GET http://localhost:3001/api/persons/4
-###
+### bad delete
 DELETE http://localhost:3001/api/persons/5
-###
+### good delete
 DELETE http://localhost:3001/api/persons/4
 ### good post
 POST http://localhost:3001/api/persons/ HTTP/1.1
