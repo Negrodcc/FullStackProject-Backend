@@ -1,0 +1,27 @@
+{
+  "name": "phonebook",
+  "version": "1.0.0",
+  "description": "phonebook backend",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Negrodcc/FullStackProject-Backend.git"
+  },
+  "author": "Bastian C",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Negrodcc/FullStackProject-Backend/issues"
+  },
+  "homepage": "https://github.com/Negrodcc/FullStackProject-Backend#readme",
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
