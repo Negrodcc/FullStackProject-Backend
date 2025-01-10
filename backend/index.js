@@ -1,6 +1,11 @@
 const express = require('express')
 const app = express()
 const morgan = require('morgan')
+const cors = require('cors')
+//use cors
+app.use(cors())
+
+
 //to be available to recieved data in JSON format and parser automaticly in js objects 
 app.use(express.json())
 
