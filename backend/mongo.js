@@ -7,7 +7,6 @@ if (process.argv.length <3){
 
 const password = encodeURIComponent(process.argv[2])
 
-console.log("the password is : ", password)
 
 const url = `mongodb+srv://negrodcc:${password}@fullstack.r7yq8.mongodb.net/noteApp?retryWrites=true&w=majority&appName=FullStack`
 
@@ -23,8 +22,8 @@ const noteSchema = new mongoose.Schema({
 const Note = mongoose.model('Note', noteSchema)
 
 const note = new Note({
-    content: 'Express is not a good backend API',
-    importatn: false,
+    content: 'HTML es muy facil',
+    important: true,
 })
 
 note.save().then(result => {
