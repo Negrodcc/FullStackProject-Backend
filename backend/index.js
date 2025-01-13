@@ -1,7 +1,9 @@
+require('dotenv').config()
 const express = require('express')
 const app = express()
 const morgan = require('morgan')
 const cors = require('cors')
+const Note = require('./models/person')
 
 app.use(express.static('dist'))
 //use cors
@@ -51,7 +53,10 @@ app.get('/', (request, response) => {
 })
 
 app.get('/api/persons', (request, response) => {
-    response.json(persons)
+    Note.find({})
+      .then(persons => {
+        response.json(persons)
+      })
   })
 
 
@@ -68,14 +73,10 @@ app.get('/info', (request, response) => {
  })
 
 app.get('/api/persons/:id', (request, response) => {
-    const id = request.params.id
-    const person = persons.find(p => p.id == id)
-    if (person) {
-        response.json(person)
-    }
-    else {
-        response.status(400).end()
-    }
+    Note.findById(response.params.id)
+      .then(note => {
+        response.json(note)
+      })
 })
 
 app.delete('/api/persons/:id', (request, response) => {
@@ -109,25 +110,19 @@ app.post('/api/persons/', (request, response) => {
             error: 'number missing' 
           })
     }
-    //if the person has correctly the two fields, then we check that the name hasn't been added already
-    const duplicated = persons.find(person => person.name === data.name)
-    if (duplicated) {
-        return response.status(400).json({ 
-            error: 'name must be unique' 
-        })
-    }
     //(notice that all if statements have a return, therefore we dont need a else statement)
     //we pass all the requeriments, so we add the new person
-    const newPerson = {...data, id: getId()} //add the id field
-    persons = persons.concat(newPerson)
-    response.json(newPerson)
-
-
-    
-
+    const newPerson = new Note({
+      name: data.name,
+      number: data.number,
+    })
+    newPerson.save()
+      .then(savedNote => {
+        response.json(savedNote)
+      })
 })
 
-const PORT = 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
