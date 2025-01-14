@@ -25,3 +25,7 @@ content-type: application/json
 {
     "name": "Bastiancito"
 }
+###
+GET http://localhost:3001/api/persons/6782df370c6d591c80b3ec57
+###
+GET http://localhost:3001/info

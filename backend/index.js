@@ -63,17 +63,21 @@ app.get('/api/persons', (request, response) => {
 app.get('/info', (request, response) => {
     //like the request don't have the time, we must to check it now
     const time = new Date().toString();
-    const htmlResponse = `
-    <div>
-      <p>Phonebook has information for ${persons.length} people!</p>
-      <p>${time}</p>
-    </div>
-    `
-    response.send(htmlResponse)
+    Person.find({})
+      .then(allData => {
+        const htmlResponse = `
+        <div>
+          <p>Phonebook has information for ${allData.length} people!</p>
+          <p>${time}</p>
+        </div>
+        `
+        response.send(htmlResponse)
+      })
  })
 
 app.get('/api/persons/:id', (request, response) => {
-    Person.findById(response.params.id)
+  console.log(`the id is : ${request.params.id}`)
+    Person.findById(request.params.id)
       .then(Person => {
         response.json(Person)
       })
@@ -111,14 +115,19 @@ app.post('/api/persons/', (request, response, next) => {
           //if the number is the same (all the data is the same)
           if (dataSameName.number === data.number) {
             console.log("duplicated data")
-            response.status(404).send({error: "duplicated data"})
+            response.status(400).end()
           }
           //if not, we updated the number
           else {
-            Person.findByIdAndUpdate(request.params.id, dataSameName, {new : true})
+            console.log("the dataSameName id is : ", dataSameName.id)
+            const newPerson = {
+              name: dataSameName.name,
+              number: data.number,
+            }
+            Person.findByIdAndUpdate(dataSameName.id, newPerson, {new : true})
               .then(updatedPerson => {
                 console.log("updated person is now : ", updatedPerson)
-                response.json(updatedNote)
+                response.json(updatedPerson)
               })
               .catch(error => next(error))
           }
