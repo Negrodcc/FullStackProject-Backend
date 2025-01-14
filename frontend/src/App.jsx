@@ -123,6 +123,13 @@ const App = () => {
       const numberDuplicated = persons.some(person => person.number === newNumber)
       if (numberDuplicated) {
         alert(`${newName} is already added to the phonebook and you are not changing the phone nummber : ${newNumber}`)
+        //we also send the POST to the backend, beacuse the backend its ready to suppor it
+        const newPerson = {name: newName,
+          number: newNumber}
+        Service
+        .create(newPerson)
+        .then(data => console.log(data))
+        .catch(error => console.log(error))
       }
       else {
         //if there is a new number wee need to update it
@@ -134,7 +141,7 @@ const App = () => {
           //person updated with the new number
           const personUpdated = {...personToUpdate, number : newNumber}
           Service
-            .update(idPerson, personUpdated) //updated it in the db.json
+            .create(personUpdated) //the post in the backend makes the updated
             .then(data => {
               console.log(`the person ${data.name} now has the next phonenumber : ${data.number}`)
               //set the persons with a new array with the updated data
@@ -146,8 +153,8 @@ const App = () => {
               setSuccessMessage(`${data.name} updated with the new number : ${data.number}`)
               setTimeout(() => setSuccessMessage(null), timerMessages)
             })
-            .catch( () => {
-              setErrorMessage(`information of ${newName} has already removed from the server`)
+            .catch((error) => {
+              setErrorMessage(error.response.data.error)
               setNewName('')
               setNewNumber('')
               setTimeout(() => {
@@ -179,7 +186,13 @@ const App = () => {
           setNewNumber('')
           //add the success message
           setSuccessMessage(`${data.name} added`)
-          setTimeout(() => setSuccessMessage(null), 3000)
+          setTimeout(() => setSuccessMessage(null), timerMessages)
+        })
+        .catch(error => {
+          console.log(error.response.data.error)
+          setErrorMessage(error.response.data.error)
+          setTimeout(() => setSuccessMessage(null), timerMessages)
+
         })
     }
   }
