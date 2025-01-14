@@ -3,7 +3,7 @@ const express = require('express')
 const app = express()
 const morgan = require('morgan')
 const cors = require('cors')
-const Note = require('./models/person')
+const Person = require('./models/person')
 
 app.use(express.static('dist'))
 //use cors
@@ -53,7 +53,7 @@ app.get('/', (request, response) => {
 })
 
 app.get('/api/persons', (request, response) => {
-    Note.find({})
+    Person.find({})
       .then(persons => {
         response.json(persons)
       })
@@ -73,30 +73,21 @@ app.get('/info', (request, response) => {
  })
 
 app.get('/api/persons/:id', (request, response) => {
-    Note.findById(response.params.id)
-      .then(note => {
-        response.json(note)
+    Person.findById(response.params.id)
+      .then(Person => {
+        response.json(Person)
       })
 })
 
-app.delete('/api/persons/:id', (request, response) => {
-    const id = request.params.id
-    const person = persons.find(p => p.id == id)
-    //we check if that id's person exists
-    if (person) {
-        persons = persons.filter(n => n.id != id)
+app.delete('/api/persons/:id', (request, response, next) => {
+    Person.findByIdAndDelete(request.params.id)
+      .then(deletedPerson => {
+        console.log("the deteled person is : ", deletedPerson)
         response.status(204).end()
-    }
-    else {
-        //if does'nt exists, we send a 400 code error
-        response.status(400).end()
-    }
+      })
+      .catch(error => next(error))
 })
 
-const getId = () => {
-    let bigRandomInt = Math.floor(Math.random() * 1e6);
-    return bigRandomInt
-}
 
 app.post('/api/persons/', (request, response) => {
     const data = request.body //thanks to app.use(express.json())
@@ -110,17 +101,56 @@ app.post('/api/persons/', (request, response) => {
             error: 'number missing' 
           })
     }
-    //(notice that all if statements have a return, therefore we dont need a else statement)
-    //we pass all the requeriments, so we add the new person
-    const newPerson = new Note({
-      name: data.name,
-      number: data.number,
-    })
-    newPerson.save()
-      .then(savedNote => {
-        response.json(savedNote)
+
+    //check if the name its already in the database, then if the number is a new one, we update it
+    Person.findOne({name: data.name})
+      .then(dataSameName => {
+        console.log("sameName is : ", dataSameName)
+        //if sameName exists
+        if (dataSameName) {
+          //if the number is the same (all the data is the same)
+          if (dataSameName.number === data.number) {
+            console.log("duplicated data")
+            response.status(404).send({error: "duplicated data"})
+          }
+          //if not, we updated the number
+          else {
+            Person.findByIdAndUpdate(request.params.id, dataSameName, {new : true})
+              .then(updatedPerson => {
+                console.log("updated person is now : ", updatedPerson)
+                response.json(updatedNote)
+              })
+              .catch(error => next(error))
+          }
+        }
+        //if its a new name, then we save the person
+        else {
+          const newPerson = new Person({
+            name: data.name,
+            number: data.number,
+          })
+          newPerson.save()
+            .then(savedPerson => {
+              response.json(savedPerson)
+            })
+        }
+
       })
+    .catch(error => next(error))
 })
+
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  } 
+
+  next(error)
+}
+
+// this has to be the last loaded middleware, also all the routes should be registered before this!
+app.use(errorHandler)
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {
