@@ -1,5 +1,9 @@
 import axios from 'axios'
-const baseUrl = 'api/persons'
+const baseUrl =
+  process.env.NODE_ENV === 'production'
+    ? 'https://render-notes-oowh.onrender.com/api/persons' // Production
+    : '/api/persons'; // Proxy for development
+
 
 const getAll = () => {
     const request = axios.get(baseUrl)
