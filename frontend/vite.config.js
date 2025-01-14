@@ -11,7 +11,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://render-notes-oowh.onrender.com', 
+        target: 'https://render-notes-oowh.onrender.com/', 
         changeOrigin: true,
       },
     }
