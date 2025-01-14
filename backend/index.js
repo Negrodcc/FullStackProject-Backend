@@ -89,7 +89,7 @@ app.delete('/api/persons/:id', (request, response, next) => {
 })
 
 
-app.post('/api/persons/', (request, response) => {
+app.post('/api/persons/', (request, response, next) => {
     const data = request.body //thanks to app.use(express.json())
     if (!data.name) {
         return response.status(400).json({ 
