@@ -1,6 +1,7 @@
 import { useState, useEffect} from 'react'
 import Service from './services/persons'
 
+// eslint-disable-next-line react/prop-types
 const SuccessfulMessage = ({message}) => {
   if (message===null) {
     null
@@ -14,6 +15,7 @@ const SuccessfulMessage = ({message}) => {
   }
 }
 
+// eslint-disable-next-line react/prop-types
 const ErrorMessage = ({message}) => {
   if (message===null) {
     null
@@ -27,6 +29,7 @@ const ErrorMessage = ({message}) => {
   }
 }
 
+// eslint-disable-next-line react/prop-types
 const FilterName = ({filterName, handleFilterName}) => {
   return (
     <>
@@ -35,6 +38,7 @@ const FilterName = ({filterName, handleFilterName}) => {
   )
 }
 
+// eslint-disable-next-line react/prop-types
 const PersonForm = ({newName, handleNameChange, newNumber, handleNumberChange, handleAddPerson}) => {
   return (
     <form onSubmit={handleAddPerson}> 
@@ -49,6 +53,7 @@ const PersonForm = ({newName, handleNameChange, newNumber, handleNumberChange, h
   )
 }
 
+// eslint-disable-next-line react/prop-types
 const Persons = ({filter_persons, handlerDeleted}) => {
   return (
     <div>
@@ -60,6 +65,7 @@ const Persons = ({filter_persons, handlerDeleted}) => {
 }
 
 //Button to deleted a person
+// eslint-disable-next-line react/prop-types
 const DeletedButton = ({id, handlerDeleted})  => {
   //button 
   return (
@@ -137,7 +143,6 @@ const App = () => {
         if (userConfirmed) {
           //original data, and remember that nama is a unique key, so find will always return only one person
           const personToUpdate = persons.find(person => person.name == newName)
-          const idPerson = personToUpdate.id
           //person updated with the new number
           const personUpdated = {...personToUpdate, number : newNumber}
           Service
